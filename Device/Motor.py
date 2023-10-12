@@ -47,7 +47,7 @@ class Model_17HS3401(Motor):
                 self._history_step_angle -= self.step_angle
             
             if not checkStop is None:
-                if checkStop(self._history_step_angle) == True: return self._history_step_angle
+                if checkStop(self._history_step_angle) == True: break
                 
                  
         return self._history_step_angle
@@ -68,6 +68,5 @@ class Model_MG90S(Motor):
         
     def classify(self):
         return "servo"
-            
-            
+             
             

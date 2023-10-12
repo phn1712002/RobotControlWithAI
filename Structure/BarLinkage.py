@@ -9,7 +9,7 @@ class BarLinkage(MechanicalComponents):
         super().__init__(name, material)
         self.geometric_size = geometric_size
 
-# Class
+# Classo
 class FourBarLinkage(BarLinkage):
     def __init__(self, 
                  motor:Motor, 

@@ -32,12 +32,28 @@ class SpurGear(Gear):
         self.i_inverse = self.calcGear(z, False)
         
     def calcParameter(self, input, inverse=False):
+        """ Đây là hàm dùng để tính tham số của bánh răng thông qua tỷ số truyền như: Vòng xoay, vận tốc góc.
+        Args:
+            input (_type_): Đây là số bất kì của đại lượng nào đó thông qua tỷ số truyền.
+            inverse (bool, optional): True - tức tính qua tỷ số truyền i_1n, False - tức tính qua tỷ số truyền i_n1
+
+        Returns:
+            _type_: Một giá trị cùng đại lượng với input
+        """
         if inverse:
             return input * self.i_inverse
         else:
             return input * self.i
         
     def calcGear(self, z, inverse=False):
+        """ Đây là hàm dùng để tính tỷ số truyền của hệ bánh răng thẳng
+        Args:
+            z (list): Có thể là Số răng, đường kính các vòng trên bánh răng.
+            inverse (bool, optional): True - tức tính tỷ số truyền i_1n, False - tức tính tỷ số truyền i_n1
+
+        Returns:
+            _type_: Tỷ số truyền của hệ bánh răng thẳng
+        """
         i = 1
         for index in range(len(z) - 1):
             i *= z[index + 1] / z[index]
