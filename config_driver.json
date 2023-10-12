@@ -1,0 +1,27 @@
+{
+    "board": "COM2",
+    "ena_motor": {
+        "pin": 8,
+        "input": 0
+    }, 
+    "motor_right": {
+        "step_pin": 4,
+        "dir_pin": 7
+    },
+    "switch_right": {
+        "pin": 9,
+        "inverse_message": false
+    },
+    "motor_left": {
+        "step_pin": 2,
+        "dir_pin": 6
+    },
+    "switch_left": {
+        "pin": 10,
+        "inverse_message": false
+    },
+    "motor_arm":{
+        "pin": 11
+    }
+
+}

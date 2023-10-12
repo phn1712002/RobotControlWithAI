@@ -1,0 +1,8 @@
+pyFirmata
+tensorflow
+keras
+PyAudio
+opencv-python
+transformers
+pyclean
+numpy
