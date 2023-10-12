@@ -3,3 +3,10 @@ Venv/*
 
 # TFLITE
 TensorflowLite/*
+
+# Pycache
+__pycache__/*
+*.pyc
+
+# Test
+test.*
