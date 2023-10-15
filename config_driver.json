@@ -8,7 +8,6 @@
     },
 
     "board": "COM2",
-    "delay_motorST": 0.0001,
     "ena_motor": {
         "pin": 8,
         "input": 1
@@ -25,7 +24,8 @@
         "inverse_message": true
     },
     "link_1":{
-        "z": [20 ,49]
+        "z": [20 ,49],
+        "delay_motor": 0.0001
     },
 
     "motor_right": {
@@ -39,7 +39,8 @@
         "inverse_message": true
     },
     "link_2":{
-        "z": [20 ,49]
+        "z": [20 ,49],
+        "delay_motor": 0.0001
     },
 
     "motor_arm":{
@@ -47,7 +48,8 @@
     },
     "link_arm":{
         "z": [1, 2],
-        "angle_limit": [0, 120]
+        "angle_limit": [0, 120],
+        "delay_motor": 0.5
     },
 
     "motor_mid":{

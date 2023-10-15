@@ -1,4 +1,4 @@
-import cv2 ,sounddevice, pyaudio, keyboard
+import cv2, sounddevice, pyaudio, keyboard
 
 class Micro:
     def __init__(self): pass

@@ -7,5 +7,4 @@ transformers
 pyclean
 numpy
 opencv-python
-pyaudio
 keyboard

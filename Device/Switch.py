@@ -1,4 +1,3 @@
-import time
 from pyfirmata import Arduino
 from Device.Components import ElectronicComponents
 

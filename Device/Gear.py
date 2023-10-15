@@ -2,8 +2,8 @@ from Device.Components import MechanicalComponents
 
 # Interfaces
 class Gear(MechanicalComponents):
-    def __init__(self, name=None, material=None):
-        super().__init__(name, material)
+    def __init__(self, name=None):
+        super().__init__(name)
         self.z = None
         self.i = None
         self.i_inverse = None
@@ -12,8 +12,8 @@ class Gear(MechanicalComponents):
 
 # Class
 class MultiGear(Gear):
-    def __init__(self, multi_gear=None, name=None, material=None):
-        super().__init__(name, material)
+    def __init__(self, multi_gear=None, name=None, ):
+        super().__init__(name)
         self.multi_gear = multi_gear
     
     def calcParameter(self, input, inverse):
@@ -23,10 +23,9 @@ class MultiGear(Gear):
         
 class SpurGear(Gear):
     def __init__(self,
-                     z=[1, 2], 
-                     material=None, 
-                     name=None):
-        super().__init__(name=name, material=material)
+                 z=[1, 2], 
+                 name=None):
+        super().__init__(name=name)
         self.z = z
         self.i = self.calcGear(z, True)
         self.i_inverse = self.calcGear(z, False)

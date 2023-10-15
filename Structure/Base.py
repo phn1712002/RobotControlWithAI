@@ -2,14 +2,14 @@ from Device.Components import MechanicalComponents
 from Device.Motor import Motor
 from Device.Gear import SpurGear
 
+# Class
 class Base_V1(MechanicalComponents):
     def __init__(self, 
                  motor: Motor, 
                  z=[1, 2], 
                  angle_limit=[-60, 60],
-                 material=None,
                  name=None):
-        super().__init__(name=name, material=material)
+        super().__init__(name=name)
         self.motor = motor
         self.gear = SpurGear(z=z)
         self.angle_limit = [self.gear.calcParameter(angle_limit[0], True)[0], self.gear.calcParameter(angle_limit[1], True)[0]]

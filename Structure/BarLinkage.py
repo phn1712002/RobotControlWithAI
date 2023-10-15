@@ -5,24 +5,19 @@ from Device.Components import MechanicalComponents
 
 # Interfaces
 class BarLinkage(MechanicalComponents):
-    def __init__(self, geometric_size, name=None, material=None):
-        super().__init__(name, material)
-        self.geometric_size = geometric_size
+    def __init__(self, name=None):
+        super().__init__(name)
 
 # Classo
 class FourBarLinkage(BarLinkage):
     def __init__(self, 
                  motor:Motor, 
                  limit_swith: Switch,
-                 geometric_size={40, 20, 40, 30},
-                 pos_dir=0,
-                 material=None,
                  name=None,
                  ):
-        super().__init__(geometric_size, name=name, material=material)
+        super().__init__(name=name)
         self.motor = motor 
         self.limit_swith = limit_swith
-        self.pos_dir = pos_dir
         self.status_break = None
         
     def step(self, angle=1, delay=0.0001, checkStop=None):
