@@ -13,32 +13,30 @@ class BarLinkage(MechanicalComponents):
 class FourBarLinkage(BarLinkage):
     def __init__(self, 
                  motor:Motor, 
+                 limit_swith: Switch,
                  geometric_size={40, 20, 40, 30},
-                 limit_swith=[None, None],
-                 limit_angle=[-np.Inf, np.Inf],
+                 pos_dir=0,
                  material=None,
                  name=None,
                  ):
         super().__init__(geometric_size, name=name, material=material)
         self.motor = motor 
         self.limit_swith = limit_swith
-        self.limit_angle = limit_angle
+        self.pos_dir = pos_dir
+        self.status_break = None
         
-    def step(self, steps=1, direction=1, delay=0.005):
+    def step(self, angle=1, delay=0.0001, checkStop=None):
         
-        def checkStop(self, angle):
-            check = False
-            if not self.limit_swith[0] is None:
-                if self.limit_swith[0].checkClick() == True: check = True
-            if not self.limit_swith[1] is None:
-                if self.limit_swith[1].checkClick() == True: check = True 
-            if angle < self.limit_angle[0] or angle > self.limit_angle[1]:
-                check = True
-                
+        def checkStop_fn(self, sign_steps):
+            check = self.limit_swith.checkClick()
+            if check: 
+                if self.status_break != sign_steps:
+                    self.status_break = sign_steps
+                    check = False
             return check
-            
-        self.motor.step(steps=steps, direction=direction, delay=delay, checkStop=lambda angle: checkStop(self, angle))
-    
+        
+        if checkStop is None: return self.motor.step(angle=angle, delay=delay, checkStop=lambda _, sign_steps: checkStop_fn(self, sign_steps))        
+        else: return self.motor.step(angle=angle, delay=delay, checkStop=checkStop)         
 
             
         

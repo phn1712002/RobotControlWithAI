@@ -1,3 +1,4 @@
+import time
 from pyfirmata import Arduino
 from Device.Components import ElectronicComponents
 
@@ -19,7 +20,7 @@ class Model_2A(Switch):
         self.button = board.get_pin(f'd:{self.pin}:i')
         self.inverse_message = inverse_message
     
-    def checkClick(self):
+    def checkClick(self, delay=0.0001):
         if self.inverse_message: 
             return not self.button.read()
         else:

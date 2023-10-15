@@ -41,9 +41,9 @@ class SpurGear(Gear):
             _type_: Một giá trị cùng đại lượng với input
         """
         if inverse:
-            return input * self.i_inverse
+            return [input * self.i_inverse, self.i]
         else:
-            return input * self.i
+            return [input * self.i, self.i]
         
     def calcGear(self, z, inverse=False):
         """ Đây là hàm dùng để tính tỷ số truyền của hệ bánh răng thẳng

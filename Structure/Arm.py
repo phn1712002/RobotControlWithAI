@@ -24,37 +24,29 @@ class PickDropMechanism_V1(ArmMechanical):
     def __init__(self, 
                  motor: Motor, 
                  z=[1, 2], 
-                 angle_open=120, 
-                 angle_close=0,
+                 angle_limit=[0 , 120], 
                  material=None,
                  name=None):
         
         super().__init__(name=name, material=material)
         self.motor = motor
-        if not self.motor.classify == "servo":
-            pass
-        
         # Save angle
         self.gear = SpurGear(z)
-        self.angle_open = self.gear.calcParameter(angle_open)
-        self.angle_close = self.gear.calcParameter(angle_close)
+        self.angle_limit = [self.gear.calcParameter(angle_limit[0], True)[0], self.gear.calcParameter(angle_limit[1], True)[0]]
+        
+    def open(self, delay=1):
+        self.motor.step(self.angle_open, delay)
+        return None
     
-        # Reset motor
-        self.close()
-    
-    def open(self):
-        self.motor.step(self.angle_open)
-        return self
-    
-    def close(self):
-        self.motor.step(self.angle_close)
-        return self
+    def close(self, delay=1):
+        self.motor.step(self.angle_close, delay)
+        return None
     
     def pick(self, delay=1):
         self.motor.step(self.angle_open)
         time.sleep(delay)
         self.motor.step(self.angle_close)
-        return self
+        return None
     
     def drop(self, delay=1):
         return self.pick(delay=delay)
