@@ -1,18 +1,19 @@
 import openpyxl, os
 
 def writeExcel(path, data):
+    # Check path have file exist
     if os.path.exists(path):
         try:
-            # Mở tệp Excel
+            # Open Excel
             workbook = openpyxl.load_workbook(path)
-            # Chọn một trang bất kỳ trong tệp
+            # Select sheet any
             sheet = workbook.active
 
-            # Đặt dữ liệu mới vào tệp Excel
+            # Write data in sheet
             sheet.append(data)
 
-            # Lưu tệp
+            # Save file
             workbook.save(path)
-            return "Dữ liệu đã được thêm vào tệp Excel thành công."
+            return "Save data in file success"
         except Exception as e:
-            return f"Lỗi: {str(e)}"
+            return f"Error: {str(e)}"

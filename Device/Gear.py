@@ -12,6 +12,7 @@ class Gear(MechanicalComponents):
 
 # Class
 class MultiGear(Gear):
+    
     def __init__(self, multi_gear=None, name=None, ):
         super().__init__(name)
         self.multi_gear = multi_gear
@@ -31,7 +32,8 @@ class SpurGear(Gear):
         self.i_inverse = self.calcGear(z, False)
         
     def calcParameter(self, input: int, inverse=False):
-        """ Đây là hàm dùng để tính tham số của bánh răng thông qua tỷ số truyền như: Vòng xoay, vận tốc góc.
+        """ 
+            Function calc number any using Transmission ratio with task calc
         Args:
             input (int): Number any using calc with Transmission ratio
             inverse (bool, optional): True - Calc with 1/(transmission ratio) , False - Calc with transmission ratio
