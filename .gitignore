@@ -2,7 +2,8 @@
 Venv/*
 
 # TFLITE
-TensorflowLite/*
+ModelTFLite/*.tflite
+ModelTFLite/*.json
 
 # Pycache
 __pycache__/*

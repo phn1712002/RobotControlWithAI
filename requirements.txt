@@ -11,3 +11,4 @@ keyboard
 sounddevice
 pandas
 openpyxl
+mujoco
