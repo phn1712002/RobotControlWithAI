@@ -11,3 +11,6 @@ __pycache__/*
 
 # Test
 test.*
+
+# Dataset
+Dataset/*
