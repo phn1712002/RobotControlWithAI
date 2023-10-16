@@ -6,7 +6,7 @@ class Micro:
     def playFrame(self): pass
     
 class Camera:
-    def __init__(self, COM, resolution=(1280, 720), flip=False):
+    def __init__(self, COM, resolution=[1280, 720], flip=False):
         self.COM = COM
         self.resolution = resolution
         self.flip = flip

@@ -8,3 +8,6 @@ pyclean
 numpy
 opencv-python
 keyboard
+sounddevice
+pandas
+openpyxl

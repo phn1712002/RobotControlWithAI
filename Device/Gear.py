@@ -30,28 +30,28 @@ class SpurGear(Gear):
         self.i = self.calcGear(z, True)
         self.i_inverse = self.calcGear(z, False)
         
-    def calcParameter(self, input, inverse=False):
+    def calcParameter(self, input: int, inverse=False):
         """ Đây là hàm dùng để tính tham số của bánh răng thông qua tỷ số truyền như: Vòng xoay, vận tốc góc.
         Args:
-            input (_type_): Đây là số bất kì của đại lượng nào đó thông qua tỷ số truyền.
-            inverse (bool, optional): True - tức tính qua tỷ số truyền i_1n, False - tức tính qua tỷ số truyền i_n1
+            input (int): Number any using calc with Transmission ratio
+            inverse (bool, optional): True - Calc with 1/(transmission ratio) , False - Calc with transmission ratio
 
         Returns:
-            _type_: Một giá trị cùng đại lượng với input
+            float: Number after calc
         """
         if inverse:
-            return [input * self.i_inverse, self.i]
+            return input * self.i_inverse, self.i
         else:
-            return [input * self.i, self.i]
+            return input * self.i, self.i
         
     def calcGear(self, z, inverse=False):
-        """ Đây là hàm dùng để tính tỷ số truyền của hệ bánh răng thẳng
+        """ Calc transmission ratio in system
         Args:
-            z (list): Có thể là Số răng, đường kính các vòng trên bánh răng.
-            inverse (bool, optional): True - tức tính tỷ số truyền i_1n, False - tức tính tỷ số truyền i_n1
+            z (list): List number of teeth, list diameter
+            inverse (bool, optional): True - Calc with 1/(transmission ratio) , False - Calc with transmission ratio
 
         Returns:
-            _type_: Tỷ số truyền của hệ bánh răng thẳng
+            float: Transmission ratio after calc
         """
         i = 1
         for index in range(len(z) - 1):

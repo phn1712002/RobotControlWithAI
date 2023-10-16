@@ -2,7 +2,7 @@ import pyfirmata
 from Tools.Json import loadJson, saveJson
 from pyfirmata import Arduino
 from Device.Motor import Model_17HS3401, Model_MG90S
-from Device.Switch import Model_2A
+from Device.Switch import Model_2A, Model_2A_Analog
 from Structure.Arm import PickDropMechanism_V1
 from Structure.Base import Base_V1
 from Structure.Link import Link_V1
@@ -26,6 +26,8 @@ class Robot_V1:
         self.config_motor_mid = self.config['motor_mid']
         self.config_link_base = self.config['link_base']
         
+        self.config_switch_a_2motor = self.config['switch_a_2motor']
+        
         self.config_motor_left = self.config['motor_left']
         self.config_switch_left = self.config['switch_left']
         self.config_link_1 = self.config['link_1']
@@ -45,7 +47,10 @@ class Robot_V1:
         self.ena_motor_pin = self.config_ena_motor['pin']
         self.ena_pin = self.board.get_pin(f'd:{self.ena_motor_pin}:o')
         self.ena_pin.write(self.config_ena_motor['input'])
-
+    
+        # Config switch 2 motor
+        self.switch_a_2motor = Model_2A_Analog(board=self.board, **self.config_switch_a_2motor)
+        
         # Config switch and motor right
         self.switch_right = Model_2A(board=self.board, **self.config_switch_right)
         self.motor_right = Model_17HS3401(board=self.board, **self.config_motor_right)
@@ -71,35 +76,57 @@ class Robot_V1:
         self.link_base = Base_V1(motor=self.motor_mid, **self.config_link_base)
         
         # Link_1
-        self.link_1 = Link_V1(motor=self.motor_left, limit_switch=self.switch_left, **self.config_link_1)
+        self.link_1 = Link_V1(motor=self.motor_left, limit_switch=[self.switch_left, self.switch_a_2motor], **self.config_link_1)
         
         # Link_2
-        self.link_2 = Link_V1(motor=self.motor_right, limit_switch=self.switch_right, **self.config_link_2)
+        self.link_2 = Link_V1(motor=self.motor_right, limit_switch=[self.switch_right, self.switch_a_2motor], **self.config_link_2)
 
-        
         # Link_arm
         self.link_arm = PickDropMechanism_V1(motor=self.motor_arm, **self.config_link_arm)
         
         
-    def controlOneLink(self, index, angle_or_oc):
-        if index == 0:
+    def controlOneLink(self, index_link, angle_or_oc):
+        if index_link == 0:
             output = self.link_base.step(angle=angle_or_oc)
-        elif index == 1:
+        elif index_link == 1:
             output = self.link_1.step(angle=angle_or_oc)
-        elif index == 2:
+        elif index_link == 2:
             output = self.link_2.step(angle=angle_or_oc)
-        elif index == 3:
+        elif index_link == 3:
             if angle_or_oc: output = self.link_arm.open()
             else: output = self.link_arm.close()
         return output
 
+    def getAngleOneLink(self, index_link):
+        if index_link == 0:
+            angle = self.link_base.getAngle()
+        elif index_link == 1:
+            angle = self.link_base.getAngle()
+        elif index_link == 2:
+            angle = self.link_base.getAngle()
+        return angle 
+    
+    def getAngleThreeLink(self):
+        return self.link_base.getAngle(), self.link_1.getAngle(), self.link_2.getAngle()  
+    
     def controlThreeLink(self, angle:tuple):
         output_link_base = self.link_base.step(angle=angle[0])
         output_link1 = self.link_1.step(angle=angle[1])
         output_link2 = self.link_2.step(angle[2])
         return output_link_base, output_link1, output_link2
 
-    def resetAngleLink(self): pass
+    
+    def resetAngleLink(self): 
+        self.link_base.resetAngle()
+        self.link_1.resetAngle()
+        self.link_2.resetAngle()
+        self.link_arm.close()
+        
+    def statusSearch(self): pass
+    def statusListen(self): pass
+    def statusAction(self): pass
+    def statusRetraining(self): pass
+    
     
     def getFrameInCam(self): return self.cam.getFrame()
     def getFrameInMic(self): return self.mic.getFrame()  

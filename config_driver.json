@@ -1,6 +1,8 @@
 {
     "camera": {
-        
+        "COM": 0,
+        "resolution": [1280, 720],
+        "flip": true
     },
 
     "mic": {
@@ -10,9 +12,24 @@
     "board": "COM2",
     "ena_motor": {
         "pin": 8,
-        "input": 1
+        "input": 0
     },
 
+    "motor_mid":{
+        "step_pin": 3,
+        "dir_pin": 6,
+        "div_step": 16,
+        "pos_dir": 1
+    },
+    "link_base":{
+        "z": [40.5, 78], 
+        "angle_limit": [-60, 60],
+        "delay_motor": 0.0001
+    },
+    "switch_a_2motor":{
+        "pin": 1,
+        "inverse_message": true
+    },
     "motor_left": {
         "step_pin": 4,
         "dir_pin": 7,
@@ -47,19 +64,8 @@
         "pin": 11
     },
     "link_arm":{
-        "z": [1, 2],
-        "angle_limit": [0, 120],
+        "z": [1, 1],
+        "angle_limit": [0, 60],
         "delay_motor": 0.5
-    },
-
-    "motor_mid":{
-        "step_pin": 3,
-        "dir_pin": 6,
-        "div_step": 16,
-        "pos_dir": 1
-    },
-    "link_base":{
-        "z": [1, 2], 
-        "angle_limit": [-60, 60]
     }
 }

@@ -10,7 +10,5 @@ class ElectronicComponents:
         self.pin = pin
 
 class MechanicalComponents:
-    def __init__(self, 
-                 name=None, 
-                 ):
+    def __init__(self, name=None):
         self.name = name
