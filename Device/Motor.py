@@ -50,9 +50,6 @@ class Model_17HS3401(Motor):
         if sign_steps == True: direction = self.pos_dir
         else: direction = not self.pos_dir 
         
-        # Calc angle to check break
-        angle_check_stop = self.history_step_angle + self._step_angle_conts * sign_steps
-        
         # Create checkPoint show break in steps
         in_progress_break = False
         
@@ -69,19 +66,12 @@ class Model_17HS3401(Motor):
             # Calc angle future
             temp_angle = self.history_step_angle + self.step_angle * i * sign_steps
             
-            # Wait angle to check break
-            check_break = False
-            if sign_steps == 1 and temp_angle >= angle_check_stop: check_break = True
-            if sign_steps == -1 and temp_angle <= angle_check_stop: check_break = True
-            
-            # Check break
-            if check_break:
-                if not checkStop is None:
-                    if checkStop(angle=temp_angle, sign_steps=sign_steps) == True:
-                        in_progress_break = True
-                        break
-                    angle_check_stop += self._step_angle_conts * sign_steps
-                        
+            # Check stop
+            if not checkStop is None:
+                if checkStop(angle=temp_angle, sign_steps=sign_steps) == True:
+                    in_progress_break = True
+                    break
+                
             # Save info angle step motor
             self.history_step_angle = temp_angle
             

@@ -5,7 +5,7 @@ from Device.Components import ElectronicComponents
 class SystemSensor(ElectronicComponents):
     def __init__(self, name=None, board=None, pin=0):
         super().__init__(name, board, pin)
-    def checkStop(self, check_right, sign_steps): pass
+    def checkStop(self, check_right: bool, sign_steps: int): pass
     
 class MultiSwitch_V1(SystemSensor):
     def __init__(self, board: Arduino, config_switch_right: Switch, config_switch_left: Switch, config_switch_2mid: Switch, name=None):
@@ -20,10 +20,10 @@ class MultiSwitch_V1(SystemSensor):
         self.switch_mid = Model_2A_Analog(board=board, **self.config_switch_mid)
         
         self.sign_steps_break_right = None
-        self.wait_break_current_right = None
+        self.wait_break_current_right = False
         
         self.sign_steps_break_left = None
-        self.wait_break_current_lef = None
+        self.wait_break_current_left = False
         
     def checkStop(self, check_right: bool, sign_steps: int):
             """ Function callbacks using in steps with task checkStop (stop motor when got stuck)
@@ -36,17 +36,11 @@ class MultiSwitch_V1(SystemSensor):
             """
             
             # Check switch mid 2 motor
-            skip_check = False
-            check = self.switch_mid.checkClick()
-            if check: 
-                self.sign_steps_break_right = sign_steps
-                self.sign_steps_break_left = sign_steps * -1
-                skip_check = True
+            check_mid = self.switch_mid.checkClick()
             
-            # Choose motor check?
-            if not skip_check:
-                if check_right: check = self.switch_right.checkClick()
-                else: check = self.switch_left.checkClick()
+            # Check switch right/left
+            if check_right: check = bool(self.switch_right.checkClick() + check_mid)
+            else: check = bool(self.switch_left.checkClick() + check_mid)
             
             # Check stop
             if check:
@@ -57,6 +51,8 @@ class MultiSwitch_V1(SystemSensor):
                         # Check break firts time
                         if self.sign_steps_break_right is None: 
                             self.sign_steps_break_right = sign_steps
+                            if check_mid: 
+                                self.sign_steps_break_left = self.sign_steps_break_right * -1
                             return True
                         else:
                             # Setup status wait break current
@@ -66,6 +62,8 @@ class MultiSwitch_V1(SystemSensor):
                     if self.sign_steps_break_left != sign_steps:
                         if self.sign_steps_break_left is None: 
                             self.sign_steps_break_left = sign_steps
+                            if check_mid: 
+                                self.sign_steps_break_right = self.sign_steps_break_left * -1
                             return True
                         else:
                             self.wait_break_current_left = True

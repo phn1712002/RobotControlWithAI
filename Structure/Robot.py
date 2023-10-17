@@ -51,7 +51,7 @@ class Robot_V1:
 
         # Config mutil switch 
         self.multi_switch = MultiSwitch_V1(board=self.board, 
-                                           config_switch_right=self.config_motor_right,
+                                           config_switch_right=self.config_switch_right,
                                            config_switch_left=self.config_switch_left,
                                            config_switch_2mid=self.config_switch_a_2motor)
         
