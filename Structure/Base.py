@@ -42,10 +42,10 @@ class Base_V1(MechanicalComponents):
                 if self.status_break['sign_steps_break'] != sign_steps:
                     if self.status_break['sign_steps_break'] is None: 
                         self.status_break['sign_steps_break'] = sign_steps
-                        check = False
+                        return True
                     else:
-                        check = False
                         self.status_break['wait_break_current'] = True
+                        return True
             if not check and self.status_break['wait_break_current']:
                 self.status_break['wait_break_current'] = False
                 self.status_break['sign_steps_break'] = sign_steps

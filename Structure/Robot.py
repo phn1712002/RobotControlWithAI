@@ -6,6 +6,7 @@ from Device.Switch import Model_2A, Model_2A_Analog
 from Structure.Arm import PickDropMechanism_V1
 from Structure.Base import Base_V1
 from Structure.Link import Link_V1
+from Structure.SystemSensor import MultiSwitch_V1
 from Device.Peripherals import Camera, Micro
 
 
@@ -47,19 +48,20 @@ class Robot_V1:
         self.ena_motor_pin = self.config_ena_motor['pin']
         self.ena_pin = self.board.get_pin(f'd:{self.ena_motor_pin}:o')
         self.ena_pin.write(self.config_ena_motor['input'])
-    
-        # Config switch 2 motor
-        self.switch_a_2motor = Model_2A_Analog(board=self.board, **self.config_switch_a_2motor)
+
+        # Config mutil switch 
+        self.multi_switch = MultiSwitch_V1(board=self.board, 
+                                           config_switch_right=self.config_motor_right,
+                                           config_switch_left=self.config_switch_left,
+                                           config_switch_2mid=self.config_switch_a_2motor)
         
-        # Config switch and motor right
-        self.switch_right = Model_2A(board=self.board, **self.config_switch_right)
+        # Config motor right
         self.motor_right = Model_17HS3401(board=self.board, **self.config_motor_right)
 
-        # Config switch and motor left
-        self.switch_left = Model_2A(board=self.board, **self.config_switch_left)
+        # Config smotor left
         self.motor_left = Model_17HS3401(board=self.board, **self.config_motor_left)
         
-        # Config switch and motor left
+        # Config motor mid
         self.motor_mid = Model_17HS3401(board=self.board, **self.config_motor_mid)
 
         # Config motor arm
@@ -76,10 +78,10 @@ class Robot_V1:
         self.link_base = Base_V1(motor=self.motor_mid, **self.config_link_base)
         
         # Link_1
-        self.link_1 = Link_V1(motor=self.motor_left, limit_switch=[self.switch_left, self.switch_a_2motor], **self.config_link_1)
+        self.link_1 = Link_V1(motor=self.motor_left, system_sensor=self.multi_switch, **self.config_link_1, right=False)
         
         # Link_2
-        self.link_2 = Link_V1(motor=self.motor_right, limit_switch=[self.switch_right, self.switch_a_2motor], **self.config_link_2)
+        self.link_2 = Link_V1(motor=self.motor_right, system_sensor=self.multi_switch, **self.config_link_2, right=True)
 
         # Link_arm
         self.link_arm = PickDropMechanism_V1(motor=self.motor_arm, **self.config_link_arm)
