@@ -51,6 +51,7 @@ class MultiSwitch_V1(SystemSensor):
                         # Check break firts time
                         if self.sign_steps_break_right is None: 
                             self.sign_steps_break_right = sign_steps
+                            # Change status sign break, uses no 2 motor steps reverse dir -> no got stuck in structure 
                             if check_mid: 
                                 self.sign_steps_break_left = self.sign_steps_break_right * -1
                             return True
