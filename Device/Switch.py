@@ -1,5 +1,5 @@
 from pyfirmata import Arduino
-from Device.Components import ElectronicComponents
+from .Components import ElectronicComponents
 
 # Interfaces
 class Switch(ElectronicComponents):

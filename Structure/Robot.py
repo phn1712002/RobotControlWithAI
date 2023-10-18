@@ -2,13 +2,14 @@ import pyfirmata
 from Tools.Json import loadJson, saveJson
 from pyfirmata import Arduino
 from Device.Motor import Model_17HS3401, Model_MG90S
-from Device.Switch import Model_2A, Model_2A_Analog
-from Structure.Arm import PickDropMechanism_V1
-from Structure.Base import Base_V1
-from Structure.Link import Link_V1
-from Structure.SystemSensor import MultiSwitch_V1
+from .Arm import PickDropMechanism_V1
+from .Base import Base_V1
+from .Link import Link_V1
+from .SystemSensor import MultiSwitch_V1
 from Device.Peripherals import Camera, Micro
-
+from ModelAI.WaveUnet.Architecture.Model import WaveUnet_tflite
+from ModelAI.Wav2Vec2.Architecture.Model import Wav2Vec2_tflite
+from ModelAI.BiLSTM.Architecture.Model import NERBiLSTM_tflite
 
 class Robot_V1:
     def __init__(self, config_or_path):
@@ -21,6 +22,7 @@ class Robot_V1:
         self.config_board = self.config['board']
         self.config_cam = self.config['camera']
         self.config_mic = self.config['mic']
+        self.path_model = self.config['path_model']
         
         self.config_ena_motor = self.config['ena_motor']
         
@@ -86,6 +88,11 @@ class Robot_V1:
         # Link_arm
         self.link_arm = PickDropMechanism_V1(motor=self.motor_arm, **self.config_link_arm)
         
+        ### Config model AI of Robot ###
+        # Model remove noise in audio 
+        self.remove_noise_audio = WaveUnet_tflite(path=self.path_model)
+        self.automatic_speech_recognition = Wav2Vec2_tflite(path=self.path_model)
+        self.named_entity_recognition = NERBiLSTM_tflite(path=self.path_model)
         
     def controlOneLink(self, index_link, angle_or_oc):
         if index_link == 0:

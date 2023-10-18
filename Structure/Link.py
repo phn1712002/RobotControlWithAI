@@ -1,7 +1,7 @@
 from Device.Components import MechanicalComponents
 from Device.Motor import Motor
 from Device.Gear import SpurGear
-from Structure.SystemSensor import SystemSensor
+from .SystemSensor import SystemSensor
 # Class
 class Link_V1(MechanicalComponents):
     def __init__(self, 

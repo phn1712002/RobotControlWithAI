@@ -1,4 +1,4 @@
-from Device.Components import MechanicalComponents
+from .Components import MechanicalComponents
 
 # Interfaces
 class Gear(MechanicalComponents):

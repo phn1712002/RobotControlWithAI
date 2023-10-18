@@ -6,9 +6,13 @@
     },
 
     "mic": {
-
+        "record_seconds_default": 5,
+        "rate": 16000,
+        "channels": 1,
+        "chuck": 1024
     },
-
+    "path_model": "./ModelTFLite/",
+    
     "board": "COM2",
     "ena_motor": {
         "pin": 8,

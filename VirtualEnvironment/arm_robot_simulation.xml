@@ -9,25 +9,25 @@
         <geom type="plane" size="100 100 .1" rgba="1 1 1 1"/>
 
         <!-- Body -->
-        <body name="base" pos="0 0 .28">
-            <geom type="box" size=".8 .5 .28" rgba="0 0 1 1"/>
+        <body pos="0 0 .28">
+            <geom type="box" size=".8 .5 .28" rgba="0 0 1 1" name="base"/>
             <joint name="fix" type="free"/>
             
-            <body name="link_0" pos=".39 0 .5975">
-                <geom type="cylinder" size=".1 .3175 0" rgba="1 0 0 1"/>
+            <body pos=".39 0 .5975">
+                <geom type="cylinder" size=".1 .3175 0" rgba="1 0 0 1" name="link_0"/>
                 <joint name="joint_link_0" type="hinge" pos="0 0 -.3175" axis="0 0 -1" limited="true" range="-90 90"/>
                 
-                <body name="link_1" pos="0 0 .9925">
-                    <geom type="cylinder" size=".1 .675 0" rgba="1 1 0 1"/>
+                <body pos="0 0 .9925">
+                    <geom type="cylinder" size=".1 .675 0" rgba="1 1 0 1" name="link_1"/>
                     <joint name="joint_link_1" type="hinge" pos="0 0 -.675" axis="0 1 0" limited="true" range="-50 90"/>
                     
-                    <body name="link_2" pos="0 0 1.695">
-                        <geom type="cylinder" size=".1 1.02 0" rgba="1 1 1 1"/>
+                    <body pos="0 0 1.695">
+                        <geom type="cylinder" size=".1 1.02 0" rgba="1 1 1 1" name="link_2"/>
                         <joint name="joint_link_2" type="hinge" pos="0 0 -1.02" axis="0 1 0" limited="true" range="0 180"/>
                         <site name="pos_arm" pos="0 0 1.02" size=".1"/>
                         
-                        <body name="gird_camera" pos="-.35 0 1.02">
-                            <geom type="cylinder" size=".1 .25 0" rgba="1 1 1 1" euler="0 90 0"/>
+                        <body pos="-.35 0 1.02">
+                            <geom type="cylinder" size=".1 .25 0" rgba="1 1 1 1" euler="0 90 0" name="gird_camera"/>
                             <site name="pos_camera" pos="-.25 0 0" size=".1"/>
                             <camera name="camera" pos="-.25 0 0" mode="fixed" euler="0 180 -90"/>
                         </body>

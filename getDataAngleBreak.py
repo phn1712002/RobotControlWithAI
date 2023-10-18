@@ -4,7 +4,7 @@ from Structure.Robot import Robot_V1
 
 
 PATH_CONFIG = 'config_driver.json'
-PATH_EXCEL = 'Dataset_AngleBreak.xlsx'
+PATH_EXCEL = './Dataset/Dataset_AngleBreak.xlsx'
 rb = Robot_V1(PATH_CONFIG)
 
 while True:

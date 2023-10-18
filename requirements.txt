@@ -8,7 +8,8 @@ pyclean
 numpy
 opencv-python
 keyboard
-sounddevice
 pandas
 openpyxl
 mujoco
+audiomentations
+librosa
