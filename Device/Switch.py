@@ -41,6 +41,6 @@ class Model_2A_Analog(Switch):
         
     def checkClick(self):
         if self.inverse_message: 
-            return not bool(self.button.read())
+            return not bool(round(self.button.read()))
         else:
-            return bool(self.button.read())
+            return bool(round(self.button.read()))

@@ -1,6 +1,10 @@
+
 from Structure.Robot import Robot_V1
-PATH = 'config_driver.json'
-rb = Robot_V1(PATH)
+
+
+PATH_CONFIG = 'config_driver.json'
+rb = Robot_V1(PATH_CONFIG)
+rb.statusListen(play_audio_recoding=True)
 
 
 """

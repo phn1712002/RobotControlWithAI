@@ -25,7 +25,9 @@ class Link_V1(MechanicalComponents):
                                delay=self.delay_motor, 
                                checkStop=lambda angle, sign_steps: self.system_sensor.checkStop(self.right, sign_steps)
                                )        
-          
+    def getAngle(self):
+        return self.motor.history_step_angle
+    
     def resetAngle(self):
         def checkStop_fn(self):
             check = True

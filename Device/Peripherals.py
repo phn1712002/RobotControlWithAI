@@ -1,41 +1,32 @@
 
-import cv2, pyaudio, keyboard
+import cv2, keyboard, numpy as np, sounddevice as sd
 from .Components import ElectronicComponents
+
+
 class Micro(ElectronicComponents):
-    def __init__(self, record_seconds_default=5, rate=44100, chuck=1024, channels=1, format=pyaudio.paInt16, name=None):
+    def __init__(self, record_seconds_default=5, rate=44100, channels=1, name=None):
         super().__init__(name=name, board=None, pin=0)
         self.record_seconds_default = record_seconds_default
         self.rate = rate
-        self.chuck = chuck
         self.channels = channels
-        self.format = format
-        self.audio = pyaudio.PyAudio()
-        self.stream = self.audio.open(format=self.format, 
-                                      channels=self.channels, 
-                                      rate=self.rate, 
-                                      input=True,
-                                      frames_per_buffer=self.chuck)
         
-    def close(self):
-        self.stream.stop_stream()
-        self.stream.close()
-        self.audio.terminate()
-    
-    def getFrame(self, record_seconds=None):
-        frames = []
-        time = 0
-        if not record_seconds is None: time = record_seconds
-        else: time = self.record_seconds_default
+    def getFrame(self, record_seconds=None, key_play_recoding=lambda: keyboard.wait('enter')):
+        if not key_play_recoding is None:
+            print("Please press the key to record!")
+            key_play_recoding()
         
-        for _ in range(0, int(self.rate / self.chuck * time)):
-                data = self.stream.read(self.chuck)
-                frames.append(data)
-            
-        return frames
+        duration = 0
+        if not record_seconds is None: duration = record_seconds
+        else: duration = self.record_seconds_default
+        print("Recoding")
+        audio_data = sd.rec(int(self.rate * duration), samplerate=self.rate, channels=self.channels, dtype='float32')
+        sd.wait()
+        print("End recoding")
+        return audio_data
     
-    def playFrame(self, frames):
-        for frame in frames:
-            self.stream.write(frame)
+    def playFrame(self, audio_data):
+        sd.play(audio_data, self.rate)
+        sd.wait()
 
 class Camera(ElectronicComponents):
     def __init__(self, COM, resolution=[1280, 720], flip=False, name=None):

@@ -1,4 +1,4 @@
-import pyfirmata
+import pyfirmata, numpy as np, tensorflow as tf, keyboard
 from Tools.Json import loadJson, saveJson
 from pyfirmata import Arduino
 from Device.Motor import Model_17HS3401, Model_MG90S
@@ -11,14 +11,16 @@ from ModelAI.WaveUnet.Architecture.Model import WaveUnet_tflite
 from ModelAI.Wav2Vec2.Architecture.Model import Wav2Vec2_tflite
 from ModelAI.BiLSTM.Architecture.Model import NERBiLSTM_tflite
 
-class Robot_V1:
+class  Robot_V1:
     def __init__(self, config_or_path):
         if config_or_path.__class__ is str:
             self.config = loadJson(config_or_path)
         else:
             self.config = config_or_path 
             
-        ###  Get all config for device ### 
+        ###  Get all config for device ###
+        self.config_robot = self.config['robot']
+        
         self.config_board = self.config['board']
         self.config_cam = self.config['camera']
         self.config_mic = self.config['mic']
@@ -90,9 +92,9 @@ class Robot_V1:
         
         ### Config model AI of Robot ###
         # Model remove noise in audio 
-        self.remove_noise_audio = WaveUnet_tflite(path=self.path_model)
-        self.automatic_speech_recognition = Wav2Vec2_tflite(path=self.path_model)
-        self.named_entity_recognition = NERBiLSTM_tflite(path=self.path_model)
+        self.remove_noise_audio = WaveUnet_tflite(path=self.path_model).build()
+        self.automatic_speech_recognition = Wav2Vec2_tflite(path=self.path_model).build()
+        self.named_entity_recognition = NERBiLSTM_tflite(path=self.path_model).build()
         
     def controlOneLink(self, index_link, angle_or_oc):
         if index_link == 0:
@@ -130,9 +132,60 @@ class Robot_V1:
         self.link_1.resetAngle()
         self.link_2.resetAngle()
         self.link_arm.close()
+
+    def statusListen(self, play_audio_recoding=False, key_play_recoding=lambda: keyboard.wait('enter')):
+        # Get audio in mic
+        speech_and_noise  = self.mic.getFrame(key_play_recoding=key_play_recoding)
+        if play_audio_recoding: self.viewMic(speech_and_noise)
         
+        # Remove noise in audio 
+        speech_remove_noise = self.remove_noise_audio.predict(np.squeeze(speech_and_noise))
+        if play_audio_recoding: self.viewMic(speech_remove_noise)
+        
+        # Automatic Speech_recognition
+        text_command = self.automatic_speech_recognition.predict(speech_remove_noise)
+        
+        # Named entity
+        named_entity = self.named_entity_recognition.predict(text_command)
+        
+        # Entity classification
+        grouped_data = {}
+        flag = None
+        index = 0
+        change = False
+        label_skip = ['X', 'UNK']
+
+        for word, label in named_entity:
+            tag = label.split('-')
+            tag = tag[len(tag) - 1]
+            if tag not in label_skip:
+                # Check entity change
+                if flag != tag:
+                    flag = tag
+                    change = True
+                if change: 
+                    index += 1
+                    change = False
+                
+                # Tag with index tag in string
+                tag = tag + f'_{index}' 
+                
+                # Entity division
+                if tag in grouped_data:
+                    join_word = grouped_data[tag] + ' ' + word
+                    grouped_data[tag] = join_word
+                else:
+                    grouped_data[tag] = word
+        print(grouped_data)
+        
+        # Check name
+        call_true_name = False
+        tag_name = 'N_1'
+        if tag_name in grouped_data: call_true_name = (grouped_data[tag_name] == self.config_robot['name'])
+        print(call_true_name)
+
+
     def statusSearch(self): pass
-    def statusListen(self): pass
     def statusAction(self): pass
     def statusRetraining(self): pass
     
@@ -140,7 +193,9 @@ class Robot_V1:
     def getFrameInCam(self): return self.cam.getFrame()
     def getFrameInMic(self): return self.mic.getFrame()  
     def viewCam(self): return self.cam.liveView()
-    def viewMic(self): return self.mic.playFrame()
+    def viewMic(self, audio_data): 
+        if isinstance(audio_data, tf.Tensor): audio_data = audio_data.numpy()
+        return self.mic.playFrame(audio_data)
     
     def getConfig(self, path=None):
         if not path is None: return saveJson(path=path, data=self.config)
