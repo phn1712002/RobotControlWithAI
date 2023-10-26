@@ -1,7 +1,8 @@
 from pyfirmata import Arduino
 from .Components import ElectronicComponents
-import time
-import numpy as np
+from Tools.Delay import delayMicroseconds
+import time, numpy as np
+
 
 # Interfaces
 class Motor(ElectronicComponents):
@@ -59,9 +60,9 @@ class Model_17HS3401(Motor):
             
            # Control Motor
             self.step_pin.write(1)
-            time.sleep(delay)
+            delayMicroseconds(delay)
             self.step_pin.write(0)
-            time.sleep(delay)
+            delayMicroseconds(delay)
             
             # Calc angle future
             temp_angle = self.history_step_angle + self.step_angle * i * sign_steps

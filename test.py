@@ -1,13 +1,11 @@
-
 from Structure.Robot import Robot_V1
-
 
 PATH_CONFIG = 'config_driver.json'
 rb = Robot_V1(PATH_CONFIG)
-rb.statusListen(play_audio_recoding=True)
+rb.controlOneLink(1, -90)
 
 
-"""
+""" 
 import cv2, mujoco
 from mujoco import MjModel, Renderer, MjData
 xml = "./VirtualEnvironment/arm_robot_simulation.xml"

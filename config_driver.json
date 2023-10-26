@@ -16,7 +16,7 @@
     },
     "path_model": "./ModelTFLite/",
     
-    "board": "COM2",
+    "board": "COM7",
     "ena_motor": {
         "pin": 8,
         "input": 0
@@ -25,13 +25,14 @@
     "motor_mid":{
         "step_pin": 3,
         "dir_pin": 6,
-        "div_step": 16,
+        "div_step": 8,
         "pos_dir": 1
     },
     "link_base":{
         "z": [40.5, 78], 
+        "angle_dir_def": 30,
         "angle_limit": [-60, 60],
-        "delay_motor": 0.0004
+        "delay_motor": 400
     },
     "switch_a_2motor":{
         "pin": 0,
@@ -40,8 +41,8 @@
     "motor_left": {
         "step_pin": 4,
         "dir_pin": 7,
-        "div_step": 16,
-        "pos_dir": 0
+        "div_step": 8,
+        "pos_dir": 1
     },
     "switch_left": {
         "pin": 10,
@@ -49,14 +50,14 @@
     },
     "link_1":{
         "z": [20 ,49],
-        "delay_motor": 0.0004
+        "delay_motor": 400
     },
 
     "motor_right": {
         "step_pin": 2,
         "dir_pin": 5,
-        "div_step": 16,
-        "pos_dir": 1
+        "div_step": 8,
+        "pos_dir": 0
     },
     "switch_right": {
         "pin": 9,
@@ -64,7 +65,7 @@
     },
     "link_2":{
         "z": [20 ,49],
-        "delay_motor": 0.0004
+        "delay_motor": 400
     },
 
     "motor_arm":{

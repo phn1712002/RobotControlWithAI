@@ -92,9 +92,9 @@ class  Robot_V1:
         
         ### Config model AI of Robot ###
         # Model remove noise in audio 
-        self.remove_noise_audio = WaveUnet_tflite(path=self.path_model).build()
-        self.automatic_speech_recognition = Wav2Vec2_tflite(path=self.path_model).build()
-        self.named_entity_recognition = NERBiLSTM_tflite(path=self.path_model).build()
+        self.remove_noise_audio = WaveUnet_tflite(path=self.path_model)
+        self.automatic_speech_recognition = Wav2Vec2_tflite(path=self.path_model)
+        self.named_entity_recognition = NERBiLSTM_tflite(path=self.path_model)
         
     def controlOneLink(self, index_link, angle_or_oc):
         if index_link == 0:
@@ -135,15 +135,16 @@ class  Robot_V1:
 
     def statusListen(self, play_audio_recoding=False, key_play_recoding=lambda: keyboard.wait('enter')):
         # Get audio in mic
-        speech_and_noise  = self.mic.getFrame(key_play_recoding=key_play_recoding)
-        if play_audio_recoding: self.viewMic(speech_and_noise)
+        speech = np.squeeze(self.mic.getFrame(key_play_recoding=key_play_recoding))
+        if play_audio_recoding: self.viewMic(speech)
         
-        # Remove noise in audio 
-        speech_remove_noise = self.remove_noise_audio.predict(np.squeeze(speech_and_noise))
-        if play_audio_recoding: self.viewMic(speech_remove_noise)
-        
+        # Remove noise in audio
+        speech = self.remove_noise_audio.predict(speech)
+        if play_audio_recoding: self.viewMic(speech)
+
+         
         # Automatic Speech_recognition
-        text_command = self.automatic_speech_recognition.predict(speech_remove_noise)
+        text_command = self.automatic_speech_recognition.predict(speech)
         
         # Named entity
         named_entity = self.named_entity_recognition.predict(text_command)
@@ -182,10 +183,43 @@ class  Robot_V1:
         call_true_name = False
         tag_name = 'N_1'
         if tag_name in grouped_data: call_true_name = (grouped_data[tag_name] == self.config_robot['name'])
-        print(call_true_name)
+        
+        # Get action
+        action = None
+        tag_name = 'AC_2'
+        if tag_name in grouped_data: action = grouped_data[tag_name]
+        
+        # Get name obj
+        obj = None
+        tag_name = 'OBJ_3'
+        if tag_name in grouped_data: action = grouped_data[tag_name]
+        
+        # Get direction search
+        loc = None
+        indicative_phrase_direction_in_place = ['xoay', 'quay']
+        tag_name = 'LOC_4'
+        if action in  indicative_phrase_direction_in_place: tag_name = 'LOC_3'
+        if tag_name in grouped_data: action = grouped_data[tag_name]
+        
+        # Return
+        if call_true_name and not tag_name is None: return action, loc, obj
+        else: return None
 
 
-    def statusSearch(self): pass
+    def statusSearch(self, infor_from_listen=None):
+        if infor_from_listen is None: return None
+        else:
+            action, loc, obj = infor_from_listen
+            
+            # Rotating status in place
+            indicative_phrase_direction_in_place = ['xoay', 'quay']
+            if action in indicative_phrase_direction_in_place:
+                if loc == 'phải':
+                    sign_step = 1
+                elif loc == 'trái':
+                    sign_step = -1
+                self.controlOneLink(index_link=0, angle_or_oc=sign_step * self.link_base.angle_dir_def)
+            
     def statusAction(self): pass
     def statusRetraining(self): pass
     

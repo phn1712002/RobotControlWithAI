@@ -7,6 +7,7 @@ class Base_V1(MechanicalComponents):
     def __init__(self, 
                  motor: Motor, 
                  z=[1, 2], 
+                 angle_dir_def = 30,
                  angle_limit=[-60, 60],
                  delay_motor=0.0001,
                  name=None):
@@ -14,6 +15,7 @@ class Base_V1(MechanicalComponents):
         self.motor = motor
         self.gear = SpurGear(z=z)
         self.angle_limit = angle_limit
+        self.angle_dir_def = angle_dir_def
         self.delay_motor = delay_motor
         self.status_break = {
             'sign_steps_break': None,
