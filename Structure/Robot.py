@@ -95,6 +95,14 @@ class  Robot_V1:
         self.remove_noise_audio = WaveUnet_tflite(path=self.path_model)
         self.automatic_speech_recognition = Wav2Vec2_tflite(path=self.path_model)
         self.named_entity_recognition = NERBiLSTM_tflite(path=self.path_model)
+    
+    
+    
+    def buildModelAI(self):
+        self.remove_noise_audio = self.remove_noise_audio.build()
+        self.automatic_speech_recognition = self.automatic_speech_recognition.build()
+        self.self.named_entity_recognition = self.named_entity_recognition.build()
+        
         
     def controlOneLink(self, index_link, angle_or_oc):
         if index_link == 0:
