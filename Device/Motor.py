@@ -67,15 +67,17 @@ class Model_17HS3401(Motor):
             # Calc angle future
             temp_angle = self.history_step_angle + self.step_angle * i * sign_steps
             
-            # Check stop
+            # Check stop 
             if not checkStop is None:
-                if checkStop(angle=temp_angle, sign_steps=sign_steps) == True:
+                if checkStop(angle=temp_angle, sign_steps=sign_steps, exit=False) == True:
                     in_progress_break = True
                     break
                 
             # Save info angle step motor
             self.history_step_angle = temp_angle
             
+        # Exit checkStop and create new checkStop
+        checkStop(0, 0, exit=True)
         return self.history_step_angle, in_progress_break
                           
 class Model_MG90S(Motor):

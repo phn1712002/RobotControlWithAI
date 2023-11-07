@@ -23,7 +23,7 @@ class Link_V1(MechanicalComponents):
         # Control motor step
         return self.motor.step(angle=self.gear.calcParameter(input=angle,inverse=True), 
                                delay=self.delay_motor, 
-                               checkStop=lambda angle, sign_steps: self.system_sensor.checkStop(self.right, sign_steps)
+                               checkStop=lambda angle, sign_steps, exit: self.system_sensor.checkStop(self.right, sign_steps, exit=exit)
                                )        
     def getAngle(self):
         return self.motor.history_step_angle

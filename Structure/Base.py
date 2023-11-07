@@ -54,7 +54,7 @@ class Base_V1(MechanicalComponents):
             return check
         
         # Control motor step
-        return self.motor.step(angle=self.gear.calcParameter(input=angle, inverse=True), delay=self.delay_motor, checkStop=lambda angle, sign_steps: checkStop_fn(self, angle, sign_steps))        
+        return self.motor.step(angle=self.gear.calcParameter(input=angle, inverse=True), delay=self.delay_motor, checkStop=lambda angle, sign_steps, exit: checkStop_fn(self, angle, sign_steps))        
     
     def resetAngle(self):
         def checkStop_fn(self):
