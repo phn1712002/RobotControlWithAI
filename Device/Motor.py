@@ -54,30 +54,32 @@ class Model_17HS3401(Motor):
         # Create checkPoint show break in steps
         in_progress_break = False
         
-        # Set dir motor
-        self.dir_pin.write(direction)
-        for _ in range(steps):
-            
-           # Control Motor
-            self.step_pin.write(1)
-            delayMicroseconds(delay)
-            self.step_pin.write(0)
-            delayMicroseconds(delay)
+        for step in range(steps):
             
             # Calc angle future
             temp_angle = self.history_step_angle + self.step_angle * i * sign_steps
             
             # Check stop 
             if not checkStop is None:
-                if checkStop(angle=temp_angle, sign_steps=sign_steps, exit=False) == True:
+                if checkStop(angle=temp_angle, sign_steps=sign_steps) == True:
                     in_progress_break = True
                     break
-                
-            # Save info angle step motor
-            self.history_step_angle = temp_angle
             
-        # Exit checkStop and create new checkStop
-        checkStop(0, 0, exit=True)
+            if not in_progress_break:
+                # Set dir motor
+                if step == 1: self.dir_pin.write(direction)
+                
+                # Control Motor
+                self.step_pin.write(1)
+                delayMicroseconds(delay)
+                self.step_pin.write(0)
+                delayMicroseconds(delay)
+                
+                # Save info angle step motor
+                self.history_step_angle = temp_angle
+            
+        # Exit checkStop and create reset checkStop
+        checkStop(exit=True)
         return self.history_step_angle, in_progress_break
                           
 class Model_MG90S(Motor):

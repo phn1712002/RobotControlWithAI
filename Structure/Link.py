@@ -1,7 +1,9 @@
 from Device.Components import MechanicalComponents
 from Device.Motor import Motor
 from Device.Gear import SpurGear
+from Tools.Delay import delayMicroseconds, delaySeconds
 from .SystemSensor import SystemSensor
+
 # Class
 class Link_V1(MechanicalComponents):
     def __init__(self, 
@@ -21,10 +23,11 @@ class Link_V1(MechanicalComponents):
         
     def step(self, angle=0):
         # Control motor step
-        return self.motor.step(angle=self.gear.calcParameter(input=angle,inverse=True), 
+        return self.motor.step(angle=self.gear.calcParameter(input=angle, inverse=True), 
                                delay=self.delay_motor, 
-                               checkStop=lambda angle, sign_steps, exit: self.system_sensor.checkStop(self.right, sign_steps, exit=exit)
-                               )        
+                               checkStop=lambda angle=0, sign_steps=0, exit=False: self.system_sensor.checkStop(self.right, sign_steps, exit=exit)
+                               )
+        
     def getAngle(self):
         return self.motor.history_step_angle
     

@@ -32,7 +32,7 @@
         "z": [40.5, 78], 
         "angle_dir_def": 30,
         "angle_limit": [-60, 60],
-        "delay_motor": 700
+        "delay_motor": 1000
     },
     "switch_a_2motor":{
         "pin": 0,
@@ -50,7 +50,7 @@
     },
     "link_1":{
         "z": [20 ,49],
-        "delay_motor": 700
+        "delay_motor": 1000
     },
 
     "motor_right": {
@@ -65,7 +65,7 @@
     },
     "link_2":{
         "z": [20 ,49],
-        "delay_motor": 700
+        "delay_motor": 1000
     },
 
     "motor_arm":{
