@@ -3,6 +3,7 @@ from Tools.Excel import writeExcel
 from Tools.CMD import clearCMD
 from Structure.Robot import Robot_V1
 
+# Create all
 clearCMD()
 PATH_CONFIG = 'config_driver.json'
 PATH_EXCEL = './Dataset/Dataset_AngleBreak.xlsx'
@@ -22,8 +23,8 @@ while not kb.is_pressed('esc'):
     
     # Print info
     clearCMD()
-    print(f"ID: {count} - Link: {link} - Angle: {angle_input}")
-      
+    print(f"ID: {count} - Link: {link} - Angle: {angle_input} - Limit: {rb.multi_switch.limit_left} - {rb.multi_switch.limit_right}")
+    
     # Control RB
     angle_before_steps = rb.getAngleOneLink(index_link=link)
     angle_after_steps, in_progress_break = rb.controlOneLink(index_link=link, angle_or_oc=angle_input)

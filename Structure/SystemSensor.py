@@ -78,6 +78,7 @@ class MultiSwitch_V1(SystemSensor):
             if exit:
                 if self.wait_break_out: 
                     self.wait_break_out = False
+                    # Undo del value change
                     if self.last_value_del['del_value_change']:
                         if check_right: self.limit_left[int(self.last_value_del['index'])] = self.last_value_del['value']
                         else: self.limit_right[int(self.last_value_del['index'])] = self.last_value_del['value']
@@ -87,8 +88,8 @@ class MultiSwitch_V1(SystemSensor):
                 return True
             
             # Return True if the limit is reached
-            if None not in self.limit_right: return True
-            if None not in self.limit_left: return True
+            if check_right and None not in self.limit_right: return True
+            if not check_right and None not in self.limit_left: return True
             
             # Get value of switch
             check_m = self.switch_mid.checkClick() 
@@ -113,8 +114,18 @@ class MultiSwitch_V1(SystemSensor):
                 if not check:
                     delaySeconds(self.time_delay_break_out)
                     self.wait_break_out = False
-                    if check_right: self.limit_right[index_check_rev] = None
-                    else: self.limit_left[index_check_rev] = None
+                    if check_right: 
+                        self.limit_right[index_check_rev] = None
+                        if self.change_2motor['change']: 
+                            self.limit_left[index_check] = None
+                            self.change_2motor['last_motor'] = None
+                            self.change_2motor['change'] = False
+                    else: 
+                        self.limit_left[index_check_rev] = None
+                        if self.change_2motor['change']: 
+                            self.limit_right[index_check] = None
+                            self.change_2motor['last_motor'] = None
+                            self.change_2motor['change'] = False
                 return False
             
             # Check break out and stop motor in limit   
@@ -130,9 +141,8 @@ class MultiSwitch_V1(SystemSensor):
                         self.last_value_del['value'] = self.limit_left[int(self.last_change_2motor['index'])]
                         # Delete value
                         self.limit_left[int(self.last_change_2motor['index'])] = self.last_change_2motor['value']
-                        
-                    self.change_2motor['last_motor'] = None
-                    self.change_2motor['change'] = False
+                        self.change_2motor['last_motor'] = None
+                        self.change_2motor['change'] = False
                     return False
             else: 
                 if sign_steps in self.limit_left: return True
@@ -146,9 +156,8 @@ class MultiSwitch_V1(SystemSensor):
                         self.last_value_del['value'] = self.limit_right[int(self.last_change_2motor['index'])]
                         # Delete value
                         self.limit_right[int(self.last_change_2motor['index'])] = self.last_change_2motor['value']
-                        
-                    self.change_2motor['last_motor'] = None
-                    self.change_2motor['change'] = False
+                        self.change_2motor['last_motor'] = None
+                        self.change_2motor['change'] = False
                     return False
 
             # Add value to limit
