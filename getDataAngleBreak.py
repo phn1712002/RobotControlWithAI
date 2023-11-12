@@ -1,5 +1,6 @@
 import numpy as np, keyboard as kb, time, os
 from Tools.Excel import writeExcel
+from Tools.CMD import clearCMD
 from Structure.Robot import Robot_V1
 
 
@@ -19,8 +20,8 @@ while not kb.is_pressed('esc'):
     else: angle = sign * angle / abs(sign)
     
     # Print info
-    #os.system('cls')
-    #print(f"{link} : {angle} : {rb.multi_switch.limit_left} - {rb.multi_switch.limit_right}")
+    clearCMD()
+    print(f"{link} : {angle} : {rb.multi_switch.limit_left} - {rb.multi_switch.limit_right}")
     
     # Enter
     #while True: 
