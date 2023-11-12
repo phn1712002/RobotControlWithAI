@@ -1,6 +1,6 @@
 import openpyxl, os
 
-def writeExcel(path, data):
+def writeExcel(path:str, data:dict):
     # Check path have file exist
     if os.path.exists(path):
         try:

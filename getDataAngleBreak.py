@@ -11,7 +11,11 @@ time_delay_steps = 0.1
 
 
 # Loop
+count = 0
 while not kb.is_pressed('esc'):
+    # Count id
+    count +=1 
+    
     # Create paramenter
     link = np.random.randint(low=1, high=3)
     angle = np.random.randint(low=20, high=180)
@@ -21,14 +25,18 @@ while not kb.is_pressed('esc'):
     
     # Print info
     clearCMD()
-    print(f"{link} : {angle} : {rb.multi_switch.limit_left} - {rb.multi_switch.limit_right}")
-    
-    # Enter
-    #while True: 
-    #    if kb.is_pressed('enter'): break   
-    
+    print(f"ID: {count} - Link: {link} - Angle: {angle}")
+      
     # Control RB
-    rb.controlOneLink(index_link=link, angle_or_oc=angle)
+    break_check = rb.controlOneLink(index_link=link, angle_or_oc=angle)
+    
+    # Save data
+    data_save = {
+        'link': link,
+        'angle': angle,
+        'break_check': break_check
+    }
+    writeExcel(path=PATH_EXCEL, data=data_save)
     
     # Stop in time
     time.sleep(time_delay_steps)                

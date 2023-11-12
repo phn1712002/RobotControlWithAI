@@ -48,10 +48,16 @@ class MultiSwitch_V1(SystemSensor):
             'value':None
             } 
         
+        self.last_value_del = {
+            'index':None, 
+            'value':None
+            } 
+        
         self.change_2motor = {
             'last_motor': None, 
             'change': False
             }
+        
         
         self.time_delay_break_out = time_delay_break_out
     
@@ -71,6 +77,8 @@ class MultiSwitch_V1(SystemSensor):
             if exit:
                 if self.wait_break_out: 
                     self.wait_break_out = False
+                    if check_right: self.limit_left[int(self.last_value_del['index'])] = self.last_value_del['value']
+                    else:   self.limit_right[int(self.last_value_del['index'])] = self.last_value_del['value']
                 return True
             
             #
@@ -107,7 +115,10 @@ class MultiSwitch_V1(SystemSensor):
                 if sign_steps in self.limit_right: return True
                 elif -sign_steps in self.limit_right:
                     self.wait_break_out = True
-                    if del_value_change: self.limit_left[int(self.last_change_2motor['index'])] = self.last_change_2motor['value']
+                    if del_value_change: 
+                        self.last_value_del['index'] = int(self.last_change_2motor['index'])
+                        self.last_value_del['value'] = self.limit_left[int(self.last_change_2motor['index'])]
+                        self.limit_left[int(self.last_change_2motor['index'])] = self.last_change_2motor['value']
                     self.change_2motor['last_motor'] = None
                     self.change_2motor['change'] = False
                     return False
@@ -115,7 +126,10 @@ class MultiSwitch_V1(SystemSensor):
                 if sign_steps in self.limit_left: return True
                 elif -sign_steps in self.limit_left:
                     self.wait_break_out = True
-                    if del_value_change: self.limit_right[int(self.last_change_2motor['index'])] = self.last_change_2motor['value']
+                    if del_value_change:
+                        self.last_value_del['index'] = int(self.last_change_2motor['index'])
+                        self.last_value_del['value'] = self.limit_right[int(self.last_change_2motor['index'])]
+                        self.limit_right[int(self.last_change_2motor['index'])] = self.last_change_2motor['value']
                     self.change_2motor['last_motor'] = None
                     self.change_2motor['change'] = False
                     return False
