@@ -51,7 +51,8 @@ class MultiSwitch_V1(SystemSensor):
         self.last_value_del = {
             'del_value_change': False,
             'index':None, 
-            'value':None
+            'value':None,
+            'change_2motor': None
             } 
         
         self.change_2motor = {
@@ -82,9 +83,11 @@ class MultiSwitch_V1(SystemSensor):
                     if self.last_value_del['del_value_change']:
                         if check_right: self.limit_left[int(self.last_value_del['index'])] = self.last_value_del['value']
                         else: self.limit_right[int(self.last_value_del['index'])] = self.last_value_del['value']
+                        self.change_2motor = self.last_value_del['change_2motor']
                         self.last_value_del['index'] = None
                         self.last_value_del['value'] = None
                         self.last_value_del['del_value_change'] = False
+                        self.last_change_2motor['change_2motor'] = None
                 return True
             
             # Return True if the limit is reached
@@ -139,6 +142,7 @@ class MultiSwitch_V1(SystemSensor):
                         self.last_value_del['del_value_change'] = del_value_change
                         self.last_value_del['index'] = int(self.last_change_2motor['index'])
                         self.last_value_del['value'] = self.limit_left[int(self.last_change_2motor['index'])]
+                        self.last_value_del['change_2motor'] = self.change_2motor.copy()
                         # Delete value
                         self.limit_left[int(self.last_change_2motor['index'])] = self.last_change_2motor['value']
                         self.change_2motor['last_motor'] = None
@@ -154,6 +158,7 @@ class MultiSwitch_V1(SystemSensor):
                         self.last_value_del['del_value_change'] = del_value_change
                         self.last_value_del['index'] = int(self.last_change_2motor['index'])
                         self.last_value_del['value'] = self.limit_right[int(self.last_change_2motor['index'])]
+                        self.last_value_del['change_2motor'] = self.change_2motor.copy()
                         # Delete value
                         self.limit_right[int(self.last_change_2motor['index'])] = self.last_change_2motor['value']
                         self.change_2motor['last_motor'] = None
