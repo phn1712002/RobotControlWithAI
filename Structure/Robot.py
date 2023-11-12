@@ -121,9 +121,9 @@ class  Robot_V1:
         if index_link == 0:
             angle = self.link_base.getAngle()
         elif index_link == 1:
-            angle = self.link_base.getAngle()
+            angle = self.link_1.getAngle()
         elif index_link == 2:
-            angle = self.link_base.getAngle()
+            angle = self.link_2.getAngle()
         return angle 
     
     def getAngleThreeLink(self):
