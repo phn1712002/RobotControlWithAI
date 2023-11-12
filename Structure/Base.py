@@ -7,7 +7,6 @@ class Base_V1(MechanicalComponents):
     def __init__(self, 
                  motor: Motor, 
                  z=[1, 2], 
-                 angle_dir_def = 30,
                  angle_limit=[-60, 60],
                  delay_motor=0.0001,
                  name=None):
@@ -15,12 +14,8 @@ class Base_V1(MechanicalComponents):
         self.motor = motor
         self.gear = SpurGear(z=z)
         self.angle_limit = angle_limit
-        self.angle_dir_def = angle_dir_def
         self.delay_motor = delay_motor
-        self.status_break = {
-            'sign_steps_break': None,
-            'wait_break_current': False
-        }
+        self.sign_steps_break = None
         
     def step(self, angle):
         def checkStop_fn(self, angle, sign_steps):
@@ -39,19 +34,12 @@ class Base_V1(MechanicalComponents):
             # Check angle
             check = angle < self.angle_limit[0] or angle > self.angle_limit[1] # Diffenrent Link.py
             
-            # Like fucntion checkStop_fn in Link.py
-            if check: 
-                if self.status_break['sign_steps_break'] != sign_steps:
-                    if self.status_break['sign_steps_break'] is None: 
-                        self.status_break['sign_steps_break'] = sign_steps
-                        return True
-                    else:
-                        self.status_break['wait_break_current'] = True
-                        return True
-            if not check and self.status_break['wait_break_current']:
-                self.status_break['wait_break_current'] = False
-                self.status_break['sign_steps_break'] = sign_steps
-            return check
+            if check:
+                if self.sign_steps_break == None: return True
+                if self.sign_steps_break == sign_steps: return True
+                else:
+                    self.sign_steps_break = None
+                    return False
         
         # Control motor step
         return self.motor.step(angle=self.gear.calcParameter(input=angle, inverse=True), delay=self.delay_motor, checkStop=lambda angle, sign_steps, exit: checkStop_fn(self, angle, sign_steps))        
