@@ -111,4 +111,4 @@ urllib3==2.0.6
 wcwidth==0.2.8
 Werkzeug==3.0.0
 wrapt==1.15.0
-zipp==3.17.0
+zipp==3.17
