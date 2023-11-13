@@ -19,16 +19,21 @@ class Model_2A(Switch):
         self.button = board.get_pin(f'd:{self.pin}:i')
         self.inverse_message = inverse_message
     
-    def checkClick(self):
+    def checkClick(self, count_check=1):
         """
             Check switch is pressed ?
         Returns:
             bool: True - switch is pressed and False - no is pressed
         """
+        total = 0
+        for _ in range(count_check): 
+            total += self.button.read()
+        average = total / count_check
+
         if self.inverse_message: 
-            return not self.button.read()
+            return not bool(average)
         else:
-            return self.button.read()
+            return bool(average)
         
 class Model_2A_Analog(Switch):
     """
@@ -39,8 +44,18 @@ class Model_2A_Analog(Switch):
         self.button = board.get_pin(f'a:{self.pin}:i')
         self.inverse_message = inverse_message
         
-    def checkClick(self):
+    def checkClick(self, count_check=1):
+        """
+            Check switch is pressed ?
+        Returns:
+            bool: True - switch is pressed and False - no is pressed
+        """
+        total = 0
+        for _ in range(count_check): 
+            total += self.button.read()
+        average = total / count_check
+
         if self.inverse_message: 
-            return not bool(round(self.button.read()))
+            return not bool(round(average))
         else:
-            return bool(round(self.button.read()))
+            return bool(round(average))
