@@ -76,6 +76,6 @@
         "delay_motor": 0.5
     },
     "multi_switch":{
-        "time_delay_break_out": 0.1
+        "time_delay_break_out": 500
     }
 }

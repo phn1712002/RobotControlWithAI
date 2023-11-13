@@ -25,7 +25,7 @@ class MultiSwitch_V1(SystemSensor):
                  config_switch_right: Switch, 
                  config_switch_left: Switch, 
                  config_switch_2mid: Switch, 
-                 time_delay_break_out = 0.5,
+                 time_delay_break_out = 500,
                  name=None):
         super().__init__(name, board, None)
         
@@ -108,7 +108,7 @@ class MultiSwitch_V1(SystemSensor):
                             self.last_value_del['del_value_change'] = False
 
                     else:
-                        delaySeconds(self.time_delay_break_out)
+                        delayMicroseconds(self.time_delay_break_out)
                         if check_right: 
                             self.limit_right[index_check_rev] = None
                             if self.change_2motor['change']: 
@@ -131,7 +131,7 @@ class MultiSwitch_V1(SystemSensor):
             # Check wait break out 
             if self.wait_break_out:
                 if not check:
-                    delaySeconds(self.time_delay_break_out)
+                    delayMicroseconds(self.time_delay_break_out)
                     self.wait_break_out = False
                     if check_right: 
                         self.limit_right[index_check_rev] = None

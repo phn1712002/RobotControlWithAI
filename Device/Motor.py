@@ -24,6 +24,9 @@ class Model_17HS3401(Motor):
         
         # Env
         super().__init__(board=board, name=name)
+        self.HIGHT = 1
+        self.LOW = 0
+        
         self.dir_pin = board.get_pin(f'd:{dir_pin}:o')
         self.step_pin = board.get_pin(f'd:{step_pin}:o')
         self.div_step = div_step
@@ -54,32 +57,31 @@ class Model_17HS3401(Motor):
         # Create checkPoint show break in steps
         in_progress_break = False
         
-        for step in range(steps):
+        # Control direction
+        self.dir_pin.write(direction)
+        for _ in range(steps):
+            
+            # Control Motor
+            self.step_pin.write(self.HIGHT)
+            delayMicroseconds(delay)
+            self.step_pin.write(self.LOW)
+            delayMicroseconds(delay)
             
             # Calc angle future
             temp_angle = self.history_step_angle + self.step_angle * i * sign_steps
             
             # Check stop 
             if not checkStop is None:
-                if checkStop(angle=temp_angle, sign_steps=sign_steps) == True:
-                    in_progress_break = True
-                    break
+                if checkStop(angle=temp_angle, sign_steps=sign_steps) == True: in_progress_break = True
             
-            if not in_progress_break:
-                # Set dir motor
-                if step == 1: self.dir_pin.write(direction)
-                
-                # Control Motor
-                self.step_pin.write(1)
-                delayMicroseconds(delay)
-                self.step_pin.write(0)
-                delayMicroseconds(delay)
-                
-                # Save info angle step motor
-                self.history_step_angle = temp_angle
+            # Break out
+            if not in_progress_break: self.history_step_angle = temp_angle
+            else: break
             
         # Exit checkStop and create reset checkStop
         checkStop(exit=True)
+        delayMicroseconds(delay)
+        
         return self.history_step_angle, in_progress_break
                           
 class Model_MG90S(Motor):
