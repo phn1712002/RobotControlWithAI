@@ -98,7 +98,7 @@ class  Robot_V1:
         self.named_entity_recognition = NERBiLSTM_tflite(path=self.path_model)
 
         # Check status start of Robot 
-        if not self.checkStatusStart(): raise Exception("Please set the robot state to the starting position")
+        #if not self.checkStatusStart(): raise Exception("Please set the robot state to the starting position")
     
     def checkStatusStart(self):
         if self.multi_switch.switch_right.checkClick() and self.multi_switch.switch_left.checkClick(): return True
