@@ -75,20 +75,6 @@ class MultiSwitch_V1(SystemSensor):
             Returns:
                 bool: True - Break, False - No Break
             """
-            # If exit and wait break out no break angle small 
-            if exit:
-                if self.wait_break_out: 
-                    self.wait_break_out = False
-                    # Undo del value change
-                    if self.last_value_del['del_value_change']:
-                        if check_right: self.limit_left[int(self.last_value_del['index'])] = self.last_value_del['value']
-                        else: self.limit_right[int(self.last_value_del['index'])] = self.last_value_del['value']
-                        self.change_2motor = self.last_value_del['change_2motor']
-                        self.last_value_del['index'] = None
-                        self.last_value_del['value'] = None
-                        self.last_value_del['del_value_change'] = False
-                        self.last_change_2motor['change_2motor'] = None
-                return True
             
             # Return True if the limit is reached
             if check_right and None not in self.limit_right: return True
@@ -106,6 +92,36 @@ class MultiSwitch_V1(SystemSensor):
             # Get check in all switch
             if check_right: check = bool(check_m + check_r)
             else: check = bool(check_m + check_l)
+            
+            # If exit and wait break out no break angle small 
+            if exit:
+                if self.wait_break_out: 
+                    self.wait_break_out = False
+                    if check:
+                    # Undo del value change
+                        if self.last_value_del['del_value_change']:
+                            if check_right: self.limit_left[int(self.last_value_del['index'])] = self.last_value_del['value']
+                            else: self.limit_right[int(self.last_value_del['index'])] = self.last_value_del['value']
+                            self.change_2motor = self.last_value_del['change_2motor']
+                            self.last_value_del['index'] = None
+                            self.last_value_del['value'] = None
+                            self.last_value_del['del_value_change'] = False
+
+                    else:
+                        delaySeconds(self.time_delay_break_out)
+                        if check_right: 
+                            self.limit_right[index_check_rev] = None
+                            if self.change_2motor['change']: 
+                                self.limit_left[index_check] = None
+                                self.change_2motor['last_motor'] = None
+                                self.change_2motor['change'] = False
+                            else: 
+                                self.limit_left[index_check_rev] = None
+                                if self.change_2motor['change']: 
+                                    self.limit_right[index_check] = None
+                                    self.change_2motor['last_motor'] = None
+                                    self.change_2motor['change'] = False
+                return True
 
             # Check if the motor is stuck
             del_value_change = False

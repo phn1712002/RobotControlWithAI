@@ -2,10 +2,6 @@ import os
 import cv2
 import uuid
 
-import os
-import cv2
-import uuid
-
 def saveImage(directory:str, image, overwrite=False):
     """
     Save an image using OpenCV with a random filename
@@ -40,7 +36,7 @@ def saveImage(directory:str, image, overwrite=False):
     return cv2.imwrite(path, image)
 
 def writeText(image, text, 
-              position='center', 
+              position='top_left', 
               font=cv2.FONT_HERSHEY_SIMPLEX, 
               font_scale=1, 
               color='white', 
