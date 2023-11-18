@@ -1,9 +1,9 @@
-import tensorflow as tf
 import librosa
+import tensorflow as tf
 import numpy as np
 from audiomentations import AddGaussianSNR, AddBackgroundNoise
 from .Model import WaveUnet
-from keras import Model
+from keras_core import Model
 
 
 class PipelineWaveUnet(WaveUnet):

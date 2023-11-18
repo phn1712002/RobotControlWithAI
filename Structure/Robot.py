@@ -1,5 +1,7 @@
 import pyfirmata, numpy as np, tensorflow as tf, keyboard
+from Feature.Data import string_maps
 from Tools.Json import loadJson, saveJson
+from Feature.Deductive import fixTextVietnamese, checkCommandAccept, getDirAndStrOfNER, getNumberAngleFromText, getDirMotorFromText, getNameObjFromText
 from pyfirmata import Arduino
 from Device.Motor import Model_17HS3401, Model_MG90S
 from .Arm import PickDropMechanism_V1
@@ -17,7 +19,17 @@ class  Robot_V1:
             self.config = loadJson(config_or_path)
         else:
             self.config = config_or_path 
-            
+        
+        
+        ### CONST
+        self.ANGLE_MAX_CONTROL = np.Inf
+        self.ANGLE_FREEZE = 0 
+        self.OBJ_EMPTY = None
+        self.INDEX_LINK_BASE = 0
+        self.INDEX_LINK_1 = 1
+        self.INDEX_LINK_2 = 2 
+        self.INDEX_LINK_ARM = 3
+        
         ###  Get all config for device ###
         self.config_robot = self.config['robot']
         
@@ -98,7 +110,7 @@ class  Robot_V1:
         self.named_entity_recognition = NERBiLSTM_tflite(path=self.path_model)
 
         # Check status start of Robot 
-        #if not self.checkStatusStart(): raise Exception("Please set the robot state to the starting position")
+        if not self.checkStatusStart(): raise Exception("Please set the robot state to the starting position")
     
     def checkStatusStart(self):
         if self.multi_switch.switch_right.checkClick() and self.multi_switch.switch_left.checkClick(): return True
@@ -111,13 +123,13 @@ class  Robot_V1:
         
         
     def controlOneLink(self, index_link, angle_or_oc):
-        if index_link == 0:
+        if index_link == self.INDEX_LINK_BASE:
             output = self.link_base.step(angle=angle_or_oc)
-        elif index_link == 1:
+        elif index_link == self.INDEX_LINK_1:
             output = self.link_1.step(angle=angle_or_oc)
-        elif index_link == 2:
+        elif index_link == self.INDEX_LINK_2:
             output = self.link_2.step(angle=angle_or_oc)
-        elif index_link == 3:
+        elif index_link == self.INDEX_LINK_ARM:
             if angle_or_oc: output = self.link_arm.open()
             else: output = self.link_arm.close()
         return output
@@ -157,84 +169,43 @@ class  Robot_V1:
         if play_audio_recoding: self.viewMic(speech)
 
          
-        # Automatic Speech_recognition
+        # Automatic Speech Recognition
         text_command = self.automatic_speech_recognition.predict(speech)
+        
+        # Fix text 
+        text_command = fixTextVietnamese(text_command)
         
         # Named entity
         named_entity = self.named_entity_recognition.predict(text_command)
         
-        # Entity classification
-        grouped_data = {}
-        flag = None
-        index = 0
-        change = False
-        label_skip = ['X', 'UNK']
+        # Format output named entity
+        text_array, named_entity_array = getDirAndStrOfNER(named_entity)
+        
+        # Check Command Accept
+        accept = checkCommandAccept(string_maps['space'].join(named_entity_array))
+    
+        #
+        if accept:
+            number_angle = self.ANGLE_FREEZE
+            # Add dir in number
+            dir_action = getDirMotorFromText(text_array, named_entity_array)
+            if not dir_action is None:
+                # Text to number
+                number_angle = getNumberAngleFromText(text_array, named_entity_array)
+                if number_angle is None : number_angle = self.ANGLE_MAX_CONTROL * dir_action
+                else: number_angle *= dir_action
 
-        for word, label in named_entity:
-            tag = label.split('-')
-            tag = tag[len(tag) - 1]
-            if tag not in label_skip:
-                # Check entity change
-                if flag != tag:
-                    flag = tag
-                    change = True
-                if change: 
-                    index += 1
-                    change = False
-                
-                # Tag with index tag in string
-                tag = tag + f'_{index}' 
-                
-                # Entity division
-                if tag in grouped_data:
-                    join_word = grouped_data[tag] + ' ' + word
-                    grouped_data[tag] = join_word
-                else:
-                    grouped_data[tag] = word
-        print(grouped_data)
-        
-        # Check name
-        call_true_name = False
-        tag_name = 'N_1'
-        if tag_name in grouped_data: call_true_name = (grouped_data[tag_name] == self.config_robot['name'])
-        
-        # Get action
-        action = None
-        tag_name = 'AC_2'
-        if tag_name in grouped_data: action = grouped_data[tag_name]
-        
-        # Get name obj
-        obj = None
-        tag_name = 'OBJ_3'
-        if tag_name in grouped_data: action = grouped_data[tag_name]
-        
-        # Get direction search
-        loc = None
-        indicative_phrase_direction_in_place = ['xoay', 'quay']
-        tag_name = 'LOC_4'
-        if action in  indicative_phrase_direction_in_place: tag_name = 'LOC_3'
-        if tag_name in grouped_data: action = grouped_data[tag_name]
-        
-        # Return
-        if call_true_name and not tag_name is None: return action, loc, obj
-        else: return None
-
-
-    def statusSearch(self, infor_from_listen=None):
-        if infor_from_listen is None: return None
-        else:
-            action, loc, obj = infor_from_listen
             
-            # Rotating status in place
-            indicative_phrase_direction_in_place = ['xoay', 'quay']
-            if action in indicative_phrase_direction_in_place:
-                if loc == 'phải':
-                    sign_step = 1
-                elif loc == 'trái':
-                    sign_step = -1
-                self.controlOneLink(index_link=0, angle_or_oc=sign_step * self.link_base.angle_dir_def)
-            
-    def statusAction(self): pass
+            obj_search = getNameObjFromText(text_array, named_entity_array)
+            self.statusSearch(number_angle, obj_search)
+           
+           
+    def statusSearch(self, number_angle:int=0, obj_search=None):
+        if obj_search is self.OBJ_EMPTY: self.link_base.step(number_angle)
+        else: info_rectangle = self.link_base.stepSearchObj(number_angle, obj_search)
+        if not info_rectangle is self.OBJ_EMPTY: self.statusAction(self.getAngleThreeLink, info_rectangle)
+        
+    def statusAction(status, info_rectangle): pass
     def statusRetraining(self): pass
     
     

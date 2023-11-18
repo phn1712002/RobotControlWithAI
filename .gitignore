@@ -1,17 +1,40 @@
-# Venv
-Venv/*
+# CHECKPOINT
+Checkpoint/logs/*
+!Checkpoint/logs/.gitkeep
 
-# TFLITE
-ModelTFLite/*.tflite
-ModelTFLite/*.json
+Checkpoint/export/*
+!Checkpoint/export/.gitkeep
 
-# Pycache
-__pycache__/*
-*.pyc
+Checkpoint/save/*
+!Checkpoint/save/.gitkeep
 
-# Test
-test.*
+Checkpoint/tensorboard/*
+!Checkpoint/tensorboard/.gitkeep
+
+# SAVE
+Dataset/train/*
+!Dataset/train/.gitkeep
+
+Dataset/dev/*
+!Dataset/dev/.gitkeep
+
+Dataset/test/*
+!Dataset/test/.gitkeep
+
+Dataset/raw/*
+!Dataset/raw/.gitkeep
 
 
-# Dataset
-Dataset/*
+# ModelTFLite
+ModelTFLite/*
+!ModelTFLite/.gitkeep
+
+# WANDB
+wandb/*
+
+# CACHE
+__pycache__
+
+# TEST
+Test/*
+!Test/.gitkeep

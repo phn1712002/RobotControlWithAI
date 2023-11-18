@@ -1,6 +1,6 @@
 import tensorflow as tf
 import numpy as np
-from keras.layers import Layer
+from keras_core.layers import Layer
 
 
 '''# Custom layers'''

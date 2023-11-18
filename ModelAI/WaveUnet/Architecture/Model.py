@@ -1,12 +1,12 @@
-import keras, os
+import keras_core, os
 import tensorflow as tf
-from keras import losses, optimizers
+from keras_core import losses, optimizers
 from Tools.Json import loadJson
 from .Layers import AudioClipLayer, InterpolationLayer, CropLayer, IndependentOutputLayer, DiffOutputLayer, Squeeze, ExpandDims, Decimate, BilinearInterpol
 
 
 class CustomModel():
-    def __init__(self, model=keras.Model(), opt=optimizers.Adam(), loss=losses.mse):
+    def __init__(self, model=keras_core.Model(), opt=optimizers.Adam(), loss=losses.mse):
         self.model = model
         self.opt = opt
         self.loss = loss
@@ -50,24 +50,24 @@ class WaveUnet(CustomModel):
         with strategy.scope():
             enc_outputs = []
             
-            raw_input = keras.layers.Input(shape=(self.input_size, self.num_channels),name='raw_input')
+            raw_input = keras_core.layers.Input(shape=(self.input_size, self.num_channels),name='raw_input')
             X = raw_input
             inp = raw_input
             
             for i in range(self.num_layers):
-                X = keras.layers.Conv1D(filters=self.num_initial_filters + (self.num_initial_filters * i),
+                X = keras_core.layers.Conv1D(filters=self.num_initial_filters + (self.num_initial_filters * i),
                                         kernel_size=self.kernel_size,strides=1,
                                         padding=self.padding, name='Down_Conv_'+str(i))(X)
-                X = keras.layers.LeakyReLU(name='Down_Conv_Activ_'+str(i))(X)
+                X = keras_core.layers.LeakyReLU(name='Down_Conv_Activ_'+str(i))(X)
 
                 enc_outputs.append(X)
 
                 X = Decimate(name='Decimate_'+str(i))(X)
             
-            X = keras.layers.Conv1D(filters=self.num_initial_filters + (self.num_initial_filters * self.num_layers),
+            X = keras_core.layers.Conv1D(filters=self.num_initial_filters + (self.num_initial_filters * self.num_layers),
                                     kernel_size=self.kernel_size,strides=1,
                                     padding=self.padding, name='Down_Conv_'+str(self.num_layers))(X)
-            X = keras.layers.LeakyReLU(name='Down_Conv_Activ_'+str(self.num_layers))(X)
+            X = keras_core.layers.LeakyReLU(name='Down_Conv_Activ_'+str(self.num_layers))(X)
 
             for i in range(self.num_layers):
                 X = ExpandDims(name='exp_dims_'+str(i))(X)
@@ -80,16 +80,16 @@ class WaveUnet(CustomModel):
                 X = Squeeze(name='sq_dims_'+str(i))(X)
         
                 c_layer = CropLayer(X, False, name='crop_layer_'+str(i))(enc_outputs[-i-1])
-                X = keras.layers.Concatenate(axis=2, name='concatenate_'+str(i))([X, c_layer]) 
+                X = keras_core.layers.Concatenate(axis=2, name='concatenate_'+str(i))([X, c_layer]) 
 
 
-                X = keras.layers.Conv1D(filters=self.num_initial_filters + (self.num_initial_filters * (self.num_layers - i - 1)),
+                X = keras_core.layers.Conv1D(filters=self.num_initial_filters + (self.num_initial_filters * (self.num_layers - i - 1)),
                                         kernel_size=self.merge_filter_size,strides=1,
                                         padding=self.padding, name='Up_Conv_'+str(i))(X)
-                X = keras.layers.LeakyReLU(name='Up_Conv_Activ_'+str(i))(X)
+                X = keras_core.layers.LeakyReLU(name='Up_Conv_Activ_'+str(i))(X)
                 
             c_layer = CropLayer(X, False, name='crop_layer_'+str(self.num_layers))(inp)
-            X = keras.layers.Concatenate(axis=2, name='concatenate_'+str(self.num_layers))([X, c_layer]) 
+            X = keras_core.layers.Concatenate(axis=2, name='concatenate_'+str(self.num_layers))([X, c_layer]) 
             X = AudioClipLayer(name='audio_clip_'+str(0))(X)
 
             if self.output_type == 'direct':
@@ -99,7 +99,7 @@ class WaveUnet(CustomModel):
                 X = DiffOutputLayer(self.source_names, self.num_channels, self.output_filter_size, padding=self.padding, name='diff_out')([X, cropped_input])
             
             o = X
-            model = keras.Model(inputs=raw_input, outputs=o, name=self.name)
+            model = keras_core.Model(inputs=raw_input, outputs=o, name=self.name)
             
             # Setting Opt and Loss
             model.compile(optimizer=self.opt, loss=self.loss)
